@@ -1,7 +1,6 @@
 package br.com.vr.avaliacaointermediario.model;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -21,7 +20,6 @@ public class Cartao {
     @Column(name = "numero", nullable = false, unique = true, columnDefinition = "VARCHAR(16)")
     String numeroCartao;
     String senha;
-
     BigDecimal saldo = new BigDecimal("500.00");
 
     @OneToMany(mappedBy = "cartao", cascade = CascadeType.ALL)
@@ -53,9 +51,7 @@ public class Cartao {
             throw new TransacaoNegadaSaldoInsuficiente();
         }
 
-        MathContext precisao = new MathContext(2); // precisão de duas casas
-
-        saldo = saldo.subtract(valor, precisao);
+        saldo = saldo.subtract(valor);
         
     }
     

@@ -1,5 +1,6 @@
 package br.com.vr.avaliacaointermediario;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.Matchers.containsString;
@@ -11,6 +12,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.math.BigDecimal;
 
+import javax.transaction.Transactional;
+
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,31 +24,24 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
+import br.com.vr.avaliacaointermediario.controller.CartaoController;
 import br.com.vr.avaliacaointermediario.model.form.CartaoForm;
 import br.com.vr.avaliacaointermediario.model.form.TransacaoForm;
 
 @SpringBootTest
+@Transactional
 @AutoConfigureMockMvc
 public class TransacaoControllerTest {
 
     @Autowired
     MockMvc mockMvc;
     
-    @Test
+    @Autowired
+    CartaoController cartaoController;
+
+    @BeforeEach
     public void criaCartao() throws Exception {
-
-        CartaoForm cartao = new CartaoForm("0123456789123456", "123");
-
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
-        ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
-        String requestJson=ow.writeValueAsString(cartao);
-
-        this.mockMvc
-            .perform(post("/cartoes").contentType(MediaType.APPLICATION_JSON).content(requestJson))
-            //.andDo(print())
-            .andExpect(status().is2xxSuccessful());
-
+        cartaoController.criaCartao(new CartaoForm("0123456789123456", "123"));
 	}
 
     @Test
@@ -117,7 +113,7 @@ public class TransacaoControllerTest {
             //.andDo(print())
             .andExpect(status().is2xxSuccessful());
         
-        this.mockMvc
+            this.mockMvc
             .perform(get("/cartoes/0123456789123456"))
             //.andDo(print())
             .andExpect(status().is2xxSuccessful())
