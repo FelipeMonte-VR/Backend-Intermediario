@@ -4,12 +4,13 @@ import java.math.BigDecimal;
 
 import javax.validation.constraints.Positive;
 
+import br.com.vr.avaliacaointermediario.annotations.ApenasDuasCasasDecimais;
 import br.com.vr.avaliacaointermediario.model.Cartao;
 import br.com.vr.avaliacaointermediario.model.Transacao;
 
 public class TransacaoForm {
 
-    @Positive
+    @Positive @ApenasDuasCasasDecimais
     private BigDecimal valor;
     private String numeroCartao;
     private String senhaCartao;

@@ -57,6 +57,19 @@ public class TransacaoControllerTest {
             .andExpect(content().string(containsString("{\"field\":\"valor\",\"error\":\"must be greater than 0\"}")));
 
     }
+    
+    @Test
+    public void aoRealizarUmaTrancaoComValorDeTresCasasDecimaisDeveriaDarErro() throws Exception {
+
+        String requestJson = criaRequestJson(new TransacaoForm(new BigDecimal("100.999"), "1234567890123456", "123"));
+
+        this.mockMvc
+            .perform(post("/transacoes").header("Accept-Language", "en-US").contentType(MediaType.APPLICATION_JSON).content(requestJson))
+            // .andDo(print())
+            .andExpect(status().is4xxClientError())
+            .andExpect(content().string(containsString("{\"field\":\"valor\",\"error\":\"Only values with up to two decimal places are accepted.\"}")));
+
+    }
 
     @Test
     public void aoRealizarUmaTrancaoComUmCartaoInexistenteDeveriaDarErro() throws Exception {

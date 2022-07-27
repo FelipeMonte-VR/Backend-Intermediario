@@ -9,7 +9,7 @@ import br.com.vr.avaliacaointermediario.model.Cartao;
 
 public class CartaoForm {
     
-    @NotNull @NotEmpty @Size(min=16, max=16) @Pattern(regexp="^(0|[1-9][0-9]*)$") //(?=.{16}$)
+    @NotNull @NotEmpty @Size(min=16, max=16) @Pattern(regexp="^(0|[1-9][0-9]*)$", message = "Only numbers are accepted and can not start with 0.") //(?=.{16}$)
     String numeroCartao;
     @NotNull @NotEmpty @Size(min=1, max=32)
     String senha;

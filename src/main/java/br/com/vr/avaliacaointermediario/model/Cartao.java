@@ -19,7 +19,9 @@ public class Cartao {
     @Id
     @Column(name = "numero", nullable = false, unique = true, columnDefinition = "VARCHAR(16)")
     String numeroCartao;
+    @Column(columnDefinition = "VARCHAR(32)")
     String senha;
+    @Column(columnDefinition = "DECIMAL(65, 2)")
     BigDecimal saldo = new BigDecimal("500.00");
 
     @OneToMany(mappedBy = "cartao", cascade = CascadeType.ALL)

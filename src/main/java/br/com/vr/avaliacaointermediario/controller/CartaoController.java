@@ -33,8 +33,8 @@ public class CartaoController {
 
         List<CartaoCompletoDto> cartoes = cartaoService.pegaCartoes();
 
-
         return ResponseEntity.ok().body(cartoes);
+        
     }
     
     @PostMapping

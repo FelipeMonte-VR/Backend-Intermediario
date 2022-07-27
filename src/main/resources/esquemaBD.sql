@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS `cartoes` (
 
 CREATE TABLE IF NOT EXISTS `transacoes` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `valor` DECIMAL(2) NOT NULL,
+  `valor` DECIMAL(65, 2) NOT NULL,
   `data_hora` DATETIME NOT NULL,
   `numero_cartao` VARCHAR(16) NOT NULL,
   PRIMARY KEY (`id`),
@@ -21,5 +21,5 @@ CREATE TABLE IF NOT EXISTS `transacoes` (
     FOREIGN KEY (`numero_cartao`)
     REFERENCES `avaliacao_intermediario`.`cartoes` (`numero`)
     ON DELETE CASCADE
-    ON UPDATE CASCADE)
-ENGINE = InnoDB;
+    ON UPDATE CASCADE
+);

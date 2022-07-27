@@ -64,7 +64,7 @@ public class CartaoControllerTest {
         .perform(post("/cartoes").header("Accept-Language", "en-US").contentType(MediaType.APPLICATION_JSON).content(requestJson))
             //.andDo(print())
             .andExpect(status().is4xxClientError())
-            .andExpect(content().string(containsString("{\"field\":\"numeroCartao\",\"error\":\"must match \\\"^(0|[1-9][0-9]*)$\\\"\"}")));
+            .andExpect(content().string(containsString("{\"field\":\"numeroCartao\",\"error\":\"Only numbers are accepted and can not start with 0.\"}")));
 
     }
 
@@ -77,7 +77,7 @@ public class CartaoControllerTest {
             .perform(post("/cartoes").header("Accept-Language", "en-US").contentType(MediaType.APPLICATION_JSON).content(requestJson))
             //.andDo(print())
             .andExpect(status().is4xxClientError())
-            .andExpect(content().string(containsString("{\"field\":\"numeroCartao\",\"error\":\"must match \\\"^(0|[1-9][0-9]*)$\\\"\"}")));
+            .andExpect(content().string(containsString("{\"field\":\"numeroCartao\",\"error\":\"Only numbers are accepted and can not start with 0.\"}")));
 
     }
 

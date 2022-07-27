@@ -26,15 +26,19 @@ public class TransacaoDto {
     public Long getId() {
         return id;
     }
+
     public BigDecimal getValor() {
         return valor;
     }
+
     public LocalDateTime getData_hora() {
         return data_hora;
     }
+
     public String getNumeroCartao() {
         return numeroCartao;
     }
+    
     public static List<TransacaoDto> converte(List<Transacao> transacoes) {
         return transacoes.stream().map(TransacaoDto::new).collect(Collectors.toList());
     }

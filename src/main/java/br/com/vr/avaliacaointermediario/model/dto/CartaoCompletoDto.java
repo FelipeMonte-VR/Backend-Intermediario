@@ -18,20 +18,20 @@ public class CartaoCompletoDto {
         this.saldo = cartao.getSaldo();
     }
     
-    public static List<CartaoCompletoDto> converte(List<Cartao> cartoes) {
-        return cartoes.stream().map(CartaoCompletoDto::new).collect(Collectors.toList());
-    }
-
     public String getNumeroCartao() {
         return numeroCartao;
     }
-
+    
     public String getSenha() {
         return senha;
     }
-
+    
     public BigDecimal getSaldo() {
         return saldo;
+    }
+    
+    public static List<CartaoCompletoDto> converte(List<Cartao> cartoes) {
+        return cartoes.stream().map(CartaoCompletoDto::new).collect(Collectors.toList());
     }
 
 }
