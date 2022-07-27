@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -38,24 +39,32 @@ public class TransacaoControllerTest {
     
     @Autowired
     CartaoController cartaoController;
-
+    
     @BeforeEach
     public void criaCartao() throws Exception {
-        cartaoController.criaCartao(new CartaoForm("0123456789123456", "123"));
+        cartaoController.criaCartao(new CartaoForm("1234567890123456", "123"));
 	}
+    
+    @Test
+    public void aoRealizarUmaTrancaoComValorNegativoOuNuloDeveriaDarErro() throws Exception {
+
+        String requestJson = criaRequestJson(new TransacaoForm(new BigDecimal("-100.00"), "1234567890123456", "123"));
+
+        this.mockMvc
+            .perform(post("/transacoes").header("Accept-Language", "en-US").contentType(MediaType.APPLICATION_JSON).content(requestJson))
+            // .andDo(print())
+            .andExpect(status().is4xxClientError())
+            .andExpect(content().string(containsString("{\"field\":\"valor\",\"error\":\"must be greater than 0\"}")));
+
+    }
 
     @Test
     public void aoRealizarUmaTrancaoComUmCartaoInexistenteDeveriaDarErro() throws Exception {
 
-        TransacaoForm transacao = new TransacaoForm(new BigDecimal("10.00"), "0123456789123457", "123");
-
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
-        ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
-        String requestJson=ow.writeValueAsString(transacao);
+        String requestJson = criaRequestJson(new TransacaoForm(new BigDecimal("100.00"), "9876543210123456", "123"));
 
         this.mockMvc
-            .perform(post("/transacoes").contentType(MediaType.APPLICATION_JSON).content(requestJson))
+            .perform(post("/transacoes").header("Accept-Language", "en-US").contentType(MediaType.APPLICATION_JSON).content(requestJson))
             // .andDo(print())
             .andExpect(status().is4xxClientError())
             .andExpect(content().string(containsString("CARTAO_INEXISTENTE")));
@@ -65,15 +74,10 @@ public class TransacaoControllerTest {
     @Test
     public void aoRealizarUmaTrancaoComASenhaErradaDeveriaDarErro() throws Exception {
 
-        TransacaoForm transacao = new TransacaoForm(new BigDecimal("10.00"), "0123456789123456", "1234");
-
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
-        ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
-        String requestJson=ow.writeValueAsString(transacao);
+        String requestJson = criaRequestJson(new TransacaoForm(new BigDecimal("100.00"), "1234567890123456", "321"));
 
         this.mockMvc
-            .perform(post("/transacoes").contentType(MediaType.APPLICATION_JSON).content(requestJson))
+            .perform(post("/transacoes").header("Accept-Language", "en-US").contentType(MediaType.APPLICATION_JSON).content(requestJson))
             //.andDo(print())
             .andExpect(status().is4xxClientError())
             .andExpect(content().string(containsString("SENHA_INVALIDA")));
@@ -83,41 +87,47 @@ public class TransacaoControllerTest {
     @Test
     public void aoRealizarUmaTrancaoComValorMaiorQueOSaldoDeveriaDarErro() throws Exception {
 
-        TransacaoForm transacao = new TransacaoForm(new BigDecimal("1000.00"), "0123456789123456", "123");
-
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
-        ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
-        String requestJson=ow.writeValueAsString(transacao);
+        String requestJson = criaRequestJson(new TransacaoForm(new BigDecimal("1000.00"), "1234567890123456", "123"));
 
         this.mockMvc
-        .perform(post("/transacoes").contentType(MediaType.APPLICATION_JSON).content(requestJson))
-        //.andDo(print())
-        .andExpect(status().is4xxClientError())
-        .andExpect(content().string(containsString("SALDO_INSUFICIENTE")));
+            .perform(post("/transacoes").header("Accept-Language", "en-US").contentType(MediaType.APPLICATION_JSON).content(requestJson))
+            //.andDo(print())
+            .andExpect(status().is4xxClientError())
+            .andExpect(content().string(containsString("SALDO_INSUFICIENTE")));
 
     }
+
 
     @Test
     public void aoRealizarUmaTrancaoComTudoCertoDeveriaRetornarOKEOSaldoDoCartaoDeveriaDiminuir() throws Exception {
 
-        TransacaoForm transacao = new TransacaoForm(new BigDecimal("100.00"), "0123456789123456", "123");
-
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
-        ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
-        String requestJson=ow.writeValueAsString(transacao);
+        String requestJson = criaRequestJson(new TransacaoForm(new BigDecimal("100.00"), "1234567890123456", "123"));
 
         this.mockMvc
-            .perform(post("/transacoes").contentType(MediaType.APPLICATION_JSON).content(requestJson))
+            .perform(post("/transacoes").header("Accept-Language", "en-US").contentType(MediaType.APPLICATION_JSON).content(requestJson))
             //.andDo(print())
             .andExpect(status().is2xxSuccessful());
         
-            this.mockMvc
-            .perform(get("/cartoes/0123456789123456"))
+        this.mockMvc
+            .perform(get("/cartoes/1234567890123456"))
             //.andDo(print())
             .andExpect(status().is2xxSuccessful())
             .andExpect(content().string(containsString("400.00")));
+
+    }
+    
+    
+    private String criaRequestJson(TransacaoForm transacaoForm) throws JsonProcessingException {
+
+        ObjectMapper mapper = new ObjectMapper();
+
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+
+        ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
+
+        String requestJson = ow.writeValueAsString(transacaoForm);
+
+        return requestJson;
 
     }
     

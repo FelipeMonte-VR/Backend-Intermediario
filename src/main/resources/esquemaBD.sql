@@ -20,6 +20,6 @@ CREATE TABLE IF NOT EXISTS `transacoes` (
   CONSTRAINT `fk_transacoes_cartoes`
     FOREIGN KEY (`numero_cartao`)
     REFERENCES `avaliacao_intermediario`.`cartoes` (`numero`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
 ENGINE = InnoDB;

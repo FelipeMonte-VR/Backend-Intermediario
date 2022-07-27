@@ -2,11 +2,14 @@ package br.com.vr.avaliacaointermediario.model.form;
 
 import java.math.BigDecimal;
 
+import javax.validation.constraints.Positive;
+
 import br.com.vr.avaliacaointermediario.model.Cartao;
 import br.com.vr.avaliacaointermediario.model.Transacao;
 
 public class TransacaoForm {
 
+    @Positive
     private BigDecimal valor;
     private String numeroCartao;
     private String senhaCartao;

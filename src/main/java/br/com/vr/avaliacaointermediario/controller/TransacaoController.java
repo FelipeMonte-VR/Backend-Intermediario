@@ -2,6 +2,8 @@ package br.com.vr.avaliacaointermediario.controller;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,7 +36,7 @@ public class TransacaoController {
     }
     
     @PostMapping
-    public ResponseEntity<String> fazTransacao(@RequestBody TransacaoForm transacaoForm) throws
+    public ResponseEntity<String> fazTransacao(@Valid @RequestBody TransacaoForm transacaoForm) throws
     TransacaoNegadaCartaoNaoExisteException,
     TransacaoNegadaSenhaInvalidaException,
     TransacaoNegadaSaldoInsuficiente {
